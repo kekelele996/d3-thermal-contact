@@ -24,6 +24,7 @@ from refkit import cases  # noqa: E402
 
 APP = Path("/app")
 ENTRY = "analyze.py"
+ENTRY_PATH = os.environ.get("HTB_ENTRY", "/app/analyze.py")
 PYTHON = "/usr/local/bin/python3"
 CANDIDATE_USER = os.environ.get("HARBOR_CANDIDATE_USER", "runner")
 CANDIDATE_ENV = {
@@ -48,7 +49,7 @@ def case_dir():
 def run_candidate(run_dir, timeout=CALL_TIMEOUT_SEC):
     as_root = os.getuid() == 0
     proc = subprocess.Popen(
-        [PYTHON, str(APP / ENTRY), str(run_dir)],
+        [PYTHON, ENTRY_PATH, str(run_dir)],
         cwd=str(APP),
         env=CANDIDATE_ENV,
         stdout=subprocess.PIPE,
