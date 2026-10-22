@@ -190,10 +190,13 @@ def analyse(run):
 
     dof = max(len(run["time"]) - 2, 1)
     sigma2 = best[2] / dof
-    if base[2] <= best[2] + 4.0 * sigma2:
-        chosen = base
-    else:
-        chosen = best
+
+    pure_alpha, _, pure_cost = refine(run, power_t, power_q, 5e-7, 1e-7, fix_r=1e-7)
+    if pure_cost <= best[2] + 4.0 * sigma2:
+        alpha, _, _ = refine(run, power_t, power_q, pure_alpha, 1e-7, fix_r=1e-7, dt=0.5, nodes=41)
+        return {"alpha_m2_s": alpha, "r_m2k_w": 1e-7}
+
+    chosen = base if base[2] <= best[2] + 4.0 * sigma2 else best
     alpha, r_contact, _ = refine(run, power_t, power_q, chosen[0], chosen[1], dt=0.5, nodes=41)
     return {"alpha_m2_s": alpha, "r_m2k_w": r_contact}
 
