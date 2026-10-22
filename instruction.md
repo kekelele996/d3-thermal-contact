@@ -12,7 +12,7 @@
 
 - `meta.json`：`sample` 是样品，含 `thickness_m`、`density_kg_m3`、`cp_j_kg_k`；`block` 是铝块，字段相同；`ambient_c` 是室温；`back_heat_transfer_w_m2_k` 是样品背面与空气的换热系数；`duration_s` 是记录时长。
 - `power.csv`：两列 `t_s,q_w_m2`，加热器单位面积功率的实测记录，1 s 一行。
-- `temp.csv`：两列 `t_s,t_back_c`，样品背面温度，1 s 一行。
+- `temp.csv`：两列 `t_s,t_back_c`，样品背面温度，1 s 一行。记录里偶尔有单点尖刺，复检前要先判断数据是否可用。
 
 `/app/samples/` 下有两份带证书的样品，目录结构相同。
 

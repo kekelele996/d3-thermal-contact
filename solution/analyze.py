@@ -159,6 +159,23 @@ def simulate(alpha, r_contact, run, power_t, power_q, nodes=61, dt=0.5):
     return out
 
 
+def _keep_mask(temp):
+    """去掉单点尖刺：二阶差分明显大于中位水平的点连同左右邻点。"""
+    n = len(temp)
+    if n < 5:
+        return list(range(n))
+    d2 = [abs(temp[i + 1] - 2.0 * temp[i] + temp[i - 1]) for i in range(1, n - 1)]
+    ordered = sorted(d2)
+    med = ordered[len(ordered) // 2]
+    threshold = max(8.0 * med, 0.15)
+    bad = set()
+    for j, value in enumerate(d2):
+        if value > threshold:
+            i = j + 1
+            bad.update((i - 1, i, i + 1))
+    return [i for i in range(n) if i not in bad]
+
+
 def _residual(p, run, power_t, power_q, fixed, nodes, dt):
     if fixed is not None and fixed[0] == "r":
         alpha, r_contact = math.exp(p[0]), fixed[1]
@@ -167,7 +184,8 @@ def _residual(p, run, power_t, power_q, fixed, nodes, dt):
     else:
         alpha, r_contact = math.exp(p[0]), math.exp(p[1])
     model = simulate(alpha, r_contact, run, power_t, power_q, nodes=nodes, dt=dt)
-    return [m - t for m, t in zip(model, run["temp"])]
+    keep = run["keep"]
+    return [model[i] - run["temp"][i] for i in keep]
 
 
 def refine(run, power_t, power_q, alpha0, r0, fix_r=None, fix_alpha=None, dt=1.0, nodes=31):
@@ -237,6 +255,7 @@ def _mean(values):
 
 
 def analyse(run):
+    run["keep"] = _keep_mask(run["temp"])
     power_t = run["power_t"]
     power_q = run["power_q"]
     if SKIP == "difficulty_2":
@@ -256,7 +275,7 @@ def analyse(run):
     best = solutions[0]
     base = min(solutions, key=lambda item: item[1])
 
-    n = len(run["time"])
+    n = len(run["keep"])
     dof = max(n - 2, 1)
     sigma2 = best[2] / dof
 

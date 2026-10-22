@@ -72,6 +72,11 @@ def build(group, seed, out_dir):
         dt=0.25,
     )
     temp = [v + noise.gauss(0.0, 0.02) for v in temp]
+    if group == 3:
+        # 现场记录偶尔出现单点尖刺：少量采样被抬/压 0.6 K。
+        count = max(1, len(temp) // 150)
+        for idx in rng.sample(range(1, len(temp) - 1), count):
+            temp[idx] += 1.5 if rng.random() < 0.5 else -1.5
 
     out = Path(out_dir)
     out.mkdir(parents=True, exist_ok=True)
