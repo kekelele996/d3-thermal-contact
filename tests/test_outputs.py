@@ -96,7 +96,7 @@ def _expect(group, seed, tolerance, field):
 
 
 def test_cli_contract():
-    """题面：复检单要热扩散率和界面热阻两个数，30 秒内出结果。"""
+    """题面：“标准输出一个 JSON 对象，只有两个字段：”；“只读运行目录，不往目录里写文件；不要联网。”"""
     case = cases.build(1, 101, case_dir())
     proc = run_candidate(case["run_dir"])
     raw = proc.stdout
@@ -108,55 +108,63 @@ def test_cli_contract():
     assert data["alpha_m2_s"] > 0.0 and data["r_m2k_w"] >= 0.0, data
 
 
+def test_repeatable():
+    """题面：“同一份输入重复执行，结果一致。”"""
+    case = cases.build(1, 102, case_dir())
+    first = run_candidate(case["run_dir"]).stdout
+    second = run_candidate(case["run_dir"]).stdout
+    assert first == second
+
+
 def test_difficulty_1_case1():
-    """题面：界面热阻误差不超过 8%。界面压得松、背面绝热的装配。"""
+    """题面：“界面热阻相对误差不超过 8%”。"""
     ok, detail = _expect(1, 1101, R_TOL_GROUP_1, "r")
     assert ok, detail
 
 
 def test_difficulty_1_case2():
-    """题面：界面热阻误差不超过 8%。换一组厚度与热阻。"""
+    """题面：“界面热阻相对误差不超过 8%”，换一组厚度与热阻。"""
     ok, detail = _expect(1, 1102, R_TOL_GROUP_1, "r")
     assert ok, detail
 
 
 def test_difficulty_1_case3():
-    """题面：界面热阻误差不超过 8%。第三组界面热阻主导样例。"""
+    """题面：“界面热阻相对误差不超过 8%”，第三组界面热阻主导样例。"""
     ok, detail = _expect(1, 1103, R_TOL_GROUP_1, "r")
     assert ok, detail
 
 
 def test_difficulty_2_case1():
-    """题面：热扩散率误差不超过 1.5%。背面散热强、运行时间长的装配。"""
+    """题面：“热扩散率相对误差不超过 1.5%”，背面散热强、运行时间长。"""
     ok, detail = _expect(2, 2201, ALPHA_TOL_GROUP_2, "alpha")
     assert ok, detail
 
 
 def test_difficulty_2_case2():
-    """题面：热扩散率误差不超过 1.5%。换一组背面换热系数。"""
+    """题面：“热扩散率相对误差不超过 1.5%”，换一组背面换热系数。"""
     ok, detail = _expect(2, 2202, ALPHA_TOL_GROUP_2, "alpha")
     assert ok, detail
 
 
 def test_difficulty_2_case3():
-    """题面：热扩散率误差不超过 1.5%。第三组背面散热样例。"""
+    """题面：“热扩散率相对误差不超过 1.5%”，第三组背面散热样例。"""
     ok, detail = _expect(2, 2203, ALPHA_TOL_GROUP_2, "alpha")
     assert ok, detail
 
 
 def test_difficulty_3_case1():
-    """题面：热扩散率误差不超过 1.5%；记录里偶尔有单点跳变。"""
+    """题面：“热扩散率相对误差不超过 1.5%”，记录里偶尔有单点跳变。"""
     ok, detail = _expect(3, 3301, ALPHA_TOL_GROUP_3, "alpha")
     assert ok, detail
 
 
 def test_difficulty_3_case2():
-    """题面：热扩散率误差不超过 1.5%；功率爬升 15 到 25 秒。"""
+    """题面：“热扩散率相对误差不超过 1.5%”，功率爬升 15 到 25 秒。"""
     ok, detail = _expect(3, 3302, ALPHA_TOL_GROUP_3, "alpha")
     assert ok, detail
 
 
 def test_difficulty_3_case3():
-    """题面：热扩散率误差不超过 1.5%；换一组跳变位置。"""
+    """题面：“热扩散率相对误差不超过 1.5%”，换一组跳变位置。"""
     ok, detail = _expect(3, 3303, ALPHA_TOL_GROUP_3, "alpha")
     assert ok, detail

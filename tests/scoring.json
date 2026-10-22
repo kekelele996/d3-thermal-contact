@@ -1,7 +1,8 @@
 {
   "schema_version": 1,
   "gate_tests": [
-    "test_outputs.py::test_cli_contract"
+    "test_outputs.py::test_cli_contract",
+    "test_outputs.py::test_repeatable"
   ],
   "tests": {
     "test_outputs.py::test_difficulty_1_case1": {
