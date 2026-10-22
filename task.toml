@@ -15,11 +15,13 @@ author_email = "unknown"
 difficulty = "expert"
 category = "physics-simulation"
 tags = ["physics simulation", "d3-thermal-contact"]
+expert_time_estimate = 240
 expert_time_estimate_min = 240
-junior_time_estimate_min = 0.0
+junior_time_estimate = 0
+junior_time_estimate_min = 0
 
 [verifier]
-timeout_sec = 300.0
+timeout_sec = 300
 environment_mode = "shared"    # 显式写 shared：独立评分容器不继承 /app 的修改
 user = "root"                  # 评分以 root 运行，候选由 test_outputs.py 降权到 runner
 collect = []
@@ -27,13 +29,13 @@ collect = []
 [verifier.env]
 
 [agent]
-timeout_sec = 3600.0
+timeout_sec = 3600
 user = "runner"                # 解题与参考解以 runner 运行；Dockerfile 不写 USER，保活进程留在 root
 
 [environment]
 network_mode = "public"
 allow_internet = true
-build_timeout_sec = 900.0
+build_timeout_sec = 900
 os = "linux"
 cpus = 1
 memory_mb = 2048

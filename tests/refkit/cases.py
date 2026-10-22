@@ -5,8 +5,6 @@ import math
 import random
 from pathlib import Path
 
-import numpy as np
-
 from .forward import simulate
 
 T_AMB = 23.0
@@ -54,11 +52,10 @@ def build(group, seed, out_dir):
     rng = random.Random(seed)
     params = draw(group, rng)
     duration = int(round(params["duration"]))
-    times = np.arange(0.0, duration + 1.0, 1.0)
-    power_t = times.copy()
-    power_q = params["p0"] * (1.0 - np.exp(-times / params["tau"]))
-    noise = np.random.default_rng(rng.getrandbits(32))
-    power_log = power_q * (1.0 + noise.normal(0.0, 0.004, len(power_q)))
+    times = [float(t) for t in range(duration + 1)]
+    power_q = [params["p0"] * (1.0 - math.exp(-t / params["tau"])) for t in times]
+    noise = random.Random(rng.getrandbits(32))
+    power_log = [q * (1.0 + noise.gauss(0.0, 0.004)) for q in power_q]
 
     temp = simulate(
         params["alpha"],
@@ -69,13 +66,12 @@ def build(group, seed, out_dir):
         h_back=params["h_back"],
         t_amb=T_AMB,
         times=times,
-        power_t=power_t,
+        power_t=times,
         power_q=power_log,
         nodes=161,
         dt=0.25,
     )
-
-    temp = temp + noise.normal(0.0, 0.02, len(temp))
+    temp = [v + noise.gauss(0.0, 0.02) for v in temp]
 
     out = Path(out_dir)
     out.mkdir(parents=True, exist_ok=True)

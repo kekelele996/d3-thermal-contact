@@ -23,10 +23,14 @@ cd /tests || exit 0
 # 结束候选残留进程，清空评分目录。失败时 reward 保持 0。
 "$PY" -I score.py prepare || exit 0
 
-# -I：忽略 PYTHON* 环境变量、用户 site-packages 和当前目录，防 sitecustomize 注入。
-"$PY" -I test_outputs.py
+# pytest 与依赖随包放在 tests/wheels，离线安装，评分过程不访问网络。
+"$PY" -m pip install --no-index --find-links=/tests/wheels --require-hashes \
+    -r /tests/requirements.txt >/dev/null 2>&1 || true
 
-# reward 只由检查记录按权重汇总；测试脚本退出码不参与判定。
+# 每个测试内部把结果写进 root 私有目录，pytest 退出码不直接决定分数。
+"$PY" -m pytest -q /tests/test_outputs.py -p no:cacheprovider || true
+
+# reward 只由检查记录按权重汇总。
 "$PY" -I score.py finalize || { rm -rf "$V/reward.json" "$V/reward.txt"; echo 0 > "$V/reward.txt"; }
 
 exit 0

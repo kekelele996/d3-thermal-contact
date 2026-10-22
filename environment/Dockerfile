@@ -1,4 +1,4 @@
-FROM python:3.12.7-slim-bookworm
+FROM python:3.12.7-slim-bookworm@sha256:60d9996b6a8a3689d36db740b49f4327be3be09a21122bd02fb8895abb38b50d
 
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1
@@ -8,12 +8,7 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
 # 进程时不能把它一起结束。
 RUN useradd --create-home --uid 1000 runner
 
-RUN apt-get update \
-    && apt-get install -y --no-install-recommends curl nodejs npm procps \
-    && rm -rf /var/lib/apt/lists/*
-
-RUN pip install --no-cache-dir numpy==2.1.3 scipy==1.14.1
-
+# 运行与评分只依赖标准库；构建不需要联网，也不装第三方包。
 WORKDIR /app
 COPY app/ /app/
 RUN chown -R runner:runner /app

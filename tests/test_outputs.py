@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """逐项检查分析工具的输出。
 
-每个检查对应一个可以独立失败的难点，id 必须与 weights.json 一致。
+每个检查对应一个可以独立失败的难点，pytest 的测试名与 weights.json 的 id 一致。
 隐藏运行由 refkit 现场生成，期望值就是生成参数，不读 solution/。
 
 本脚本以 root 运行；被测程序通过 run_candidate() 以 runner 身份、干净
@@ -85,34 +85,49 @@ def relative_error(value, truth):
     return abs(value / truth - 1.0)
 
 
-def check_difficulty_1():
+def _difficulty_1():
     case = cases.build(1, secrets.randbits(63), case_dir())
     alpha, r = analyse(case)
     err = relative_error(r, case["r_contact"])
-    ok = err <= R_TOL_GROUP_1
-    return ok, f"seed={case['seed']} r_err={err:.4f} tol={R_TOL_GROUP_1}"
+    return err <= R_TOL_GROUP_1, f"seed={case['seed']} r_err={err:.4f} tol={R_TOL_GROUP_1}"
 
 
-def check_difficulty_2():
+def _difficulty_2():
     case = cases.build(2, secrets.randbits(63), case_dir())
     alpha, r = analyse(case)
     err = relative_error(alpha, case["alpha"])
-    ok = err <= ALPHA_TOL_GROUP_2
-    return ok, f"seed={case['seed']} alpha_err={err:.4f} tol={ALPHA_TOL_GROUP_2}"
+    return err <= ALPHA_TOL_GROUP_2, f"seed={case['seed']} alpha_err={err:.4f} tol={ALPHA_TOL_GROUP_2}"
 
 
-def check_difficulty_3():
+def _difficulty_3():
     case = cases.build(3, secrets.randbits(63), case_dir())
     alpha, r = analyse(case)
     err = relative_error(alpha, case["alpha"])
-    ok = err <= ALPHA_TOL_GROUP_3
-    return ok, f"seed={case['seed']} alpha_err={err:.4f} tol={ALPHA_TOL_GROUP_3}"
+    return err <= ALPHA_TOL_GROUP_3, f"seed={case['seed']} alpha_err={err:.4f} tol={ALPHA_TOL_GROUP_3}"
+
+
+def test_difficulty_1():
+    ok, detail = _difficulty_1()
+    record("difficulty_1", ok, detail)
+    assert ok, detail
+
+
+def test_difficulty_2():
+    ok, detail = _difficulty_2()
+    record("difficulty_2", ok, detail)
+    assert ok, detail
+
+
+def test_difficulty_3():
+    ok, detail = _difficulty_3()
+    record("difficulty_3", ok, detail)
+    assert ok, detail
 
 
 CHECKS = [
-    ("difficulty_1", check_difficulty_1),
-    ("difficulty_2", check_difficulty_2),
-    ("difficulty_3", check_difficulty_3),
+    ("difficulty_1", _difficulty_1),
+    ("difficulty_2", _difficulty_2),
+    ("difficulty_3", _difficulty_3),
 ]
 
 
