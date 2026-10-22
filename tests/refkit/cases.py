@@ -87,6 +87,7 @@ def build(group, seed, out_dir):
         "ambient_c": T_AMB,
         "back_heat_transfer_w_m2_k": round(params["h_back"], 4),
         "duration_s": duration,
+        "logger_note": "采样为原始记录，偶尔有单点跳变",
     }
     (out / "meta.json").write_text(json.dumps(meta, ensure_ascii=False, indent=2), encoding="utf-8")
     with (out / "power.csv").open("w", encoding="utf-8") as f:
