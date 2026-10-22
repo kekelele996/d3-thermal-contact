@@ -1,0 +1,46 @@
+schema_version = "1.3"
+artifacts = []
+
+[task]
+name = "local/d3-thermal-contact"
+version = "1.0.0"
+description = "隔热垫热扩散率与界面热阻的阶跃加热反演"
+keywords = ["d.3", "physics simulation", "d3-thermal-contact"]
+[[task.authors]]
+name = "高博"
+
+[metadata]
+author_name = "高博"
+author_email = "unknown"
+difficulty = "expert"
+category = "physics-simulation"
+tags = ["physics simulation", "d3-thermal-contact"]
+expert_time_estimate_min = 240
+junior_time_estimate_min = 0.0
+
+[verifier]
+timeout_sec = 300.0
+environment_mode = "shared"    # 显式写 shared：独立评分容器不继承 /app 的修改
+user = "root"                  # 评分以 root 运行，候选由 test_outputs.py 降权到 runner
+collect = []
+
+[verifier.env]
+
+[agent]
+timeout_sec = 3600.0
+user = "runner"                # 解题与参考解以 runner 运行；Dockerfile 不写 USER，保活进程留在 root
+
+[environment]
+network_mode = "public"
+allow_internet = true
+build_timeout_sec = 900.0
+os = "linux"
+cpus = 1
+memory_mb = 2048
+storage_mb = 4096
+gpus = 0
+mcp_servers = []
+
+[environment.env]
+
+[solution.env]

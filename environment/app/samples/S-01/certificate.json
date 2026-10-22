@@ -1,0 +1,11 @@
+{
+  "sample_id": "S-01",
+  "material": "云母隔热垫",
+  "method": "阶跃加热法",
+  "alpha_m2_s": 8.4e-07,
+  "r_m2k_w": 0.0038,
+  "temperature_c": 23.0,
+  "uncertainty": "alpha 3%, R 6% (k=2)",
+  "issued_by": "材料热物性计量站",
+  "issued_on": "2026-09-18"
+}

@@ -1,0 +1,16 @@
+{
+  "run_id": "S-02",
+  "sample": {
+    "thickness_m": 0.009,
+    "density_kg_m3": 2800.0,
+    "cp_j_kg_k": 880.0
+  },
+  "block": {
+    "thickness_m": 0.005,
+    "density_kg_m3": 2700.0,
+    "cp_j_kg_k": 896.0
+  },
+  "ambient_c": 23.0,
+  "back_heat_transfer_w_m2_k": 12.0,
+  "duration_s": 600
+}
