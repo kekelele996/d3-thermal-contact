@@ -28,6 +28,7 @@ cat > /app/thermalkit/solve.py <<'PY'
 """Model-based analysis of one measured run."""
 
 import json
+import math
 import sys
 
 import numpy as np
@@ -192,7 +193,9 @@ def analyse(run):
     sigma2 = best[2] / dof
 
     pure_alpha, _, pure_cost = refine(run, power_t, power_q, 5e-7, 1e-7, fix_r=1e-7)
-    if pure_cost <= 3.0 * best[2]:
+    n = len(run["time"])
+    bic = n * math.log(max(best[2], 1e-30) / max(pure_cost, 1e-30)) + 2.0 * math.log(n)
+    if bic >= 0.0:
         alpha, _, _ = refine(run, power_t, power_q, pure_alpha, 1e-7, fix_r=1e-7, dt=0.5, nodes=41)
         return {"alpha_m2_s": alpha, "r_m2k_w": 1e-7}
 
