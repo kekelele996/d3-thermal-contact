@@ -46,19 +46,19 @@ def load_run(run_dir):
 
 
 def _interp(t, ts, vs):
-    if t <= ts[0]:
+    if t < ts[0] + 1e-12:
         return vs[0]
-    if t >= ts[-1]:
+    if t > ts[-1] - 1e-12:
         return vs[-1]
     lo, hi = 0, len(ts) - 1
     while hi - lo > 1:
         mid = (lo + hi) // 2
-        if ts[mid] <= t:
+        if ts[mid] < t + 1e-12:
             lo = mid
         else:
             hi = mid
     span = ts[hi] - ts[lo]
-    if span <= 0.0:
+    if span < 1e-12:
         return vs[hi]
     w = (t - ts[lo]) / span
     return vs[lo] * (1.0 - w) + vs[hi] * w
@@ -150,7 +150,7 @@ def simulate(alpha, r_contact, run, power_t, power_q, nodes=61, dt=0.5):
         b_prev = [0.0] * n
         b_prev[-1] = h_back * t_amb
         b_prev[0] = q
-        while index < len(times) and times[index] <= t + 1e-9:
+        while index < len(times) and times[index] < t + 1e-9 + 1e-12:
             out[index] = temp[-1]
             index += 1
     while index < len(times):
@@ -281,11 +281,11 @@ def analyse(run):
 
     pure_alpha, _, pure_cost = refine(run, power_t, power_q, 5e-7, 1e-7, fix_r=1e-7)
     bic = n * math.log(max(best[2], 1e-30) / max(pure_cost, 1e-30)) + 2.0 * math.log(n)
-    if bic >= 0.0:
+    if bic > -1e-12:
         alpha, _, _ = refine(run, power_t, power_q, pure_alpha, 1e-7, fix_r=1e-7, dt=0.5, nodes=41)
         return {"alpha_m2_s": alpha, "r_m2k_w": 1e-7}
 
-    chosen = base if base[2] <= best[2] + 4.0 * sigma2 else best
+    chosen = base if base[2] < best[2] + 4.0 * sigma2 + 1e-12 else best
     alpha, r_contact, _ = refine(run, power_t, power_q, chosen[0], chosen[1], dt=0.5, nodes=41)
     return {"alpha_m2_s": alpha, "r_m2k_w": r_contact}
 
