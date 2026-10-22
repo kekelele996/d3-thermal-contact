@@ -102,7 +102,10 @@ def test_cli_contract():
     raw = proc.stdout
     assert proc.returncode == 0, proc.stderr[:300]
     assert raw.strip().startswith("{") and raw.strip().endswith("}"), raw[:200]
+    assert raw.endswith("\n"), raw[-20:]
+    assert len(raw.encode("utf-8")) > 0
     data = json.loads(raw)
+    assert list(data) == ["alpha_m2_s", "r_m2k_w"], list(data)
     assert set(data) == {"alpha_m2_s", "r_m2k_w"}, data
     assert isinstance(data["alpha_m2_s"], float) and isinstance(data["r_m2k_w"], float), data
     assert data["alpha_m2_s"] > 0.0 and data["r_m2k_w"] >= 0.0, data
