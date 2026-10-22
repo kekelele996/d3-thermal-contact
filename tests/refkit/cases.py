@@ -31,7 +31,7 @@ def draw(group, rng):
         params = {
             "thickness": rng.uniform(0.008, 0.012),
             "alpha": rng.uniform(3.5e-7, 9.0e-7),
-            "r_contact": rng.uniform(5.0e-5, 2.5e-4),
+            "r_contact": rng.uniform(2.0e-5, 1.0e-4),
             "h_back": rng.uniform(15.0, 30.0),
             "tau": rng.uniform(0.05, 0.15),
             "p0": rng.uniform(1800.0, 3000.0),
