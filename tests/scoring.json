@@ -1,0 +1,17 @@
+{
+  "schema_version": 1,
+  "gate_tests": [
+    "test_outputs.py::test_cli_contract"
+  ],
+  "tests": {
+    "test_outputs.py::test_difficulty_1_case1": {"weight": 0.1333, "rationale": "界面热阻主导，组 1 权重合计 0.40；三个种子分摊，本项是第一个热阻样例"},
+    "test_outputs.py::test_difficulty_1_case2": {"weight": 0.1333, "rationale": "界面热阻主导，组 1 权重合计 0.40；第二个热阻样例"},
+    "test_outputs.py::test_difficulty_1_case3": {"weight": 0.1334, "rationale": "界面热阻主导，组 1 权重合计 0.40；第三个热阻样例"},
+    "test_outputs.py::test_difficulty_2_case1": {"weight": 0.1, "rationale": "背面换热主导，组 2 权重合计 0.30；三个种子分摊"},
+    "test_outputs.py::test_difficulty_2_case2": {"weight": 0.1, "rationale": "背面换热主导，组 2 权重合计 0.30；三个种子分摊"},
+    "test_outputs.py::test_difficulty_2_case3": {"weight": 0.1, "rationale": "背面换热主导，组 2 权重合计 0.30；三个种子分摊"},
+    "test_outputs.py::test_difficulty_3_case1": {"weight": 0.1, "rationale": "功率爬升与记录尖刺主导，组 3 权重合计 0.30；三个种子分摊"},
+    "test_outputs.py::test_difficulty_3_case2": {"weight": 0.1, "rationale": "功率爬升与记录尖刺主导，组 3 权重合计 0.30；三个种子分摊"},
+    "test_outputs.py::test_difficulty_3_case3": {"weight": 0.1, "rationale": "功率爬升与记录尖刺主导，组 3 权重合计 0.30；三个种子分摊"}
+  }
+}

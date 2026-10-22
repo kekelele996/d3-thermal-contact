@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 """逐项检查分析工具的输出。
 
-每个检查对应一个可以独立失败的难点，pytest 的测试名与 weights.json 的 id 一致。
+九个计分测试分三组，每组三个种子，分别对应三个可以独立失败的难点：
+界面热阻、背面换热、功率爬升与记录尖刺。另有一个不计分的入口契约测试。
 隐藏运行由 refkit 现场生成，期望值就是生成参数，不读 solution/。
 
 本脚本以 root 运行；被测程序通过 run_candidate() 以 runner 身份、干净
@@ -11,7 +12,6 @@
 import json
 import math
 import os
-import secrets
 import signal
 import subprocess
 import sys
@@ -21,7 +21,6 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent))  # -I 模式下不自动加入脚本目录
 
 from refkit import cases  # noqa: E402
-from score import record  # noqa: E402
 
 APP = Path("/app")
 ENTRY = "analyze.py"
@@ -78,68 +77,63 @@ def analyse(case):
     r = float(data["r_m2k_w"])
     if not (math.isfinite(alpha) and math.isfinite(r)) or alpha <= 0.0 or r < 0.0:
         raise ValueError(f"invalid values: {data}")
-    return alpha, r
+    return data, alpha, r
 
 
 def relative_error(value, truth):
     return abs(value / truth - 1.0)
 
 
-def _difficulty_1():
-    case = cases.build(1, secrets.randbits(63), case_dir())
-    alpha, r = analyse(case)
-    err = relative_error(r, case["r_contact"])
-    return err <= R_TOL_GROUP_1, f"seed={case['seed']} r_err={err:.4f} tol={R_TOL_GROUP_1}"
-
-
-def _difficulty_2():
-    case = cases.build(2, secrets.randbits(63), case_dir())
-    alpha, r = analyse(case)
-    err = relative_error(alpha, case["alpha"])
-    return err <= ALPHA_TOL_GROUP_2, f"seed={case['seed']} alpha_err={err:.4f} tol={ALPHA_TOL_GROUP_2}"
-
-
-def _difficulty_3():
-    case = cases.build(3, secrets.randbits(63), case_dir())
-    alpha, r = analyse(case)
-    err = relative_error(alpha, case["alpha"])
-    return err <= ALPHA_TOL_GROUP_3, f"seed={case['seed']} alpha_err={err:.4f} tol={ALPHA_TOL_GROUP_3}"
-
-
-def test_difficulty_1():
-    ok, detail = _difficulty_1()
-    record("difficulty_1", ok, detail)
+def _expect(group, seed, tolerance, field):
+    case = cases.build(group, seed, case_dir())
+    data, alpha, r = analyse(case)
+    truth = case["r_contact"] if field == "r" else case["alpha"]
+    value = r if field == "r" else alpha
+    err = relative_error(value, truth)
+    ok = err <= tolerance
+    detail = f"seed={seed} err={err:.4f} tol={tolerance}"
     assert ok, detail
+    return detail
 
 
-def test_difficulty_2():
-    ok, detail = _difficulty_2()
-    record("difficulty_2", ok, detail)
-    assert ok, detail
+def test_cli_contract():
+    case = cases.build(1, 101, case_dir())
+    data, alpha, r = analyse(case)
+    assert set(data) == {"alpha_m2_s", "r_m2k_w"}, data
+    assert alpha > 0.0 and r >= 0.0
 
 
-def test_difficulty_3():
-    ok, detail = _difficulty_3()
-    record("difficulty_3", ok, detail)
-    assert ok, detail
+def test_difficulty_1_case1():
+    _expect(1, 1101, R_TOL_GROUP_1, "r")
 
 
-CHECKS = [
-    ("difficulty_1", _difficulty_1),
-    ("difficulty_2", _difficulty_2),
-    ("difficulty_3", _difficulty_3),
-]
+def test_difficulty_1_case2():
+    _expect(1, 1102, R_TOL_GROUP_1, "r")
 
 
-def main():
-    for check_id, fn in CHECKS:
-        try:
-            ok, detail = fn()
-        except Exception as exc:  # 单项异常记为失败，不中断后面的检查
-            ok, detail = False, f"{type(exc).__name__}: {exc}"
-        record(check_id, ok, detail)
-    return 0
+def test_difficulty_1_case3():
+    _expect(1, 1103, R_TOL_GROUP_1, "r")
 
 
-if __name__ == "__main__":
-    raise SystemExit(main())
+def test_difficulty_2_case1():
+    _expect(2, 2201, ALPHA_TOL_GROUP_2, "alpha")
+
+
+def test_difficulty_2_case2():
+    _expect(2, 2202, ALPHA_TOL_GROUP_2, "alpha")
+
+
+def test_difficulty_2_case3():
+    _expect(2, 2203, ALPHA_TOL_GROUP_2, "alpha")
+
+
+def test_difficulty_3_case1():
+    _expect(3, 3301, ALPHA_TOL_GROUP_3, "alpha")
+
+
+def test_difficulty_3_case2():
+    _expect(3, 3302, ALPHA_TOL_GROUP_3, "alpha")
+
+
+def test_difficulty_3_case3():
+    _expect(3, 3303, ALPHA_TOL_GROUP_3, "alpha")
