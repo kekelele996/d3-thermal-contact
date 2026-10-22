@@ -8,6 +8,10 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
 # 进程时不能把它一起结束。
 RUN useradd --create-home --uid 1000 runner
 
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends curl nodejs npm procps \
+    && rm -rf /var/lib/apt/lists/*
+
 RUN pip install --no-cache-dir numpy==2.1.3 scipy==1.14.1
 
 WORKDIR /app
