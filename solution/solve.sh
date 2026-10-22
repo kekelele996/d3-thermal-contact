@@ -192,7 +192,7 @@ def analyse(run):
     sigma2 = best[2] / dof
 
     pure_alpha, _, pure_cost = refine(run, power_t, power_q, 5e-7, 1e-7, fix_r=1e-7)
-    if pure_cost <= best[2] + 4.0 * sigma2:
+    if pure_cost <= 3.0 * best[2]:
         alpha, _, _ = refine(run, power_t, power_q, pure_alpha, 1e-7, fix_r=1e-7, dt=0.5, nodes=41)
         return {"alpha_m2_s": alpha, "r_m2k_w": 1e-7}
 
