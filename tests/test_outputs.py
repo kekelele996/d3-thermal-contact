@@ -12,6 +12,7 @@
 import json
 import math
 import os
+import secrets
 import signal
 import subprocess
 import sys
@@ -97,7 +98,7 @@ def _expect(group, seed, tolerance, field):
 
 def test_cli_contract():
     """题面：“标准输出一个 JSON 对象，只有两个字段：”；“只读运行目录，不往目录里写文件；不要联网。”"""
-    case = cases.build(1, 101, case_dir())
+    case = cases.build(1, secrets.randbits(32), case_dir())
     proc = run_candidate(case["run_dir"])
     raw = proc.stdout
     assert proc.returncode == 0, proc.stderr[:300]
@@ -113,7 +114,7 @@ def test_cli_contract():
 
 def test_repeatable():
     """题面：“同一份输入重复执行，结果一致。”"""
-    case = cases.build(1, 102, case_dir())
+    case = cases.build(1, secrets.randbits(32), case_dir())
     first = run_candidate(case["run_dir"]).stdout
     second = run_candidate(case["run_dir"]).stdout
     assert first == second
@@ -121,53 +122,53 @@ def test_repeatable():
 
 def test_difficulty_1_case1():
     """题面：“界面热阻相对误差不超过 8%”。"""
-    ok, detail = _expect(1, 1101, R_TOL_GROUP_1, "r")
+    ok, detail = _expect(1, secrets.randbits(32), R_TOL_GROUP_1, "r")
     assert ok, detail
 
 
 def test_difficulty_1_case2():
     """题面：“界面热阻相对误差不超过 8%”，换一组厚度与热阻。"""
-    ok, detail = _expect(1, 1102, R_TOL_GROUP_1, "r")
+    ok, detail = _expect(1, secrets.randbits(32), R_TOL_GROUP_1, "r")
     assert ok, detail
 
 
 def test_difficulty_1_case3():
     """题面：“界面热阻相对误差不超过 8%”，第三组界面热阻主导样例。"""
-    ok, detail = _expect(1, 1103, R_TOL_GROUP_1, "r")
+    ok, detail = _expect(1, secrets.randbits(32), R_TOL_GROUP_1, "r")
     assert ok, detail
 
 
 def test_difficulty_2_case1():
     """题面：“热扩散率相对误差不超过 1.5%”，背面散热强、运行时间长。"""
-    ok, detail = _expect(2, 2201, ALPHA_TOL_GROUP_2, "alpha")
+    ok, detail = _expect(2, secrets.randbits(32), ALPHA_TOL_GROUP_2, "alpha")
     assert ok, detail
 
 
 def test_difficulty_2_case2():
     """题面：“热扩散率相对误差不超过 1.5%”，换一组背面换热系数。"""
-    ok, detail = _expect(2, 2202, ALPHA_TOL_GROUP_2, "alpha")
+    ok, detail = _expect(2, secrets.randbits(32), ALPHA_TOL_GROUP_2, "alpha")
     assert ok, detail
 
 
 def test_difficulty_2_case3():
     """题面：“热扩散率相对误差不超过 1.5%”，第三组背面散热样例。"""
-    ok, detail = _expect(2, 2203, ALPHA_TOL_GROUP_2, "alpha")
+    ok, detail = _expect(2, secrets.randbits(32), ALPHA_TOL_GROUP_2, "alpha")
     assert ok, detail
 
 
 def test_difficulty_3_case1():
     """题面：“热扩散率相对误差不超过 1.5%”，记录里偶尔有单点跳变。"""
-    ok, detail = _expect(3, 3301, ALPHA_TOL_GROUP_3, "alpha")
+    ok, detail = _expect(3, secrets.randbits(32), ALPHA_TOL_GROUP_3, "alpha")
     assert ok, detail
 
 
 def test_difficulty_3_case2():
     """题面：“热扩散率相对误差不超过 1.5%”，功率爬升 15 到 25 秒。"""
-    ok, detail = _expect(3, 3302, ALPHA_TOL_GROUP_3, "alpha")
+    ok, detail = _expect(3, secrets.randbits(32), ALPHA_TOL_GROUP_3, "alpha")
     assert ok, detail
 
 
 def test_difficulty_3_case3():
     """题面：“热扩散率相对误差不超过 1.5%”，换一组跳变位置。"""
-    ok, detail = _expect(3, 3303, ALPHA_TOL_GROUP_3, "alpha")
+    ok, detail = _expect(3, secrets.randbits(32), ALPHA_TOL_GROUP_3, "alpha")
     assert ok, detail
