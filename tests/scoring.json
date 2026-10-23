@@ -1,5 +1,7 @@
 {
   "schema_version": 1,
+  "weight_policy": "business_priority",
+  "weight_policy_note": "按业务影响分配：界面热阻 0.4、背面换热 0.3、功率爬升与记录尖刺 0.3；同组内均分。",
   "gate_tests": [
     "test_outputs.py::test_cli_contract",
     "test_outputs.py::test_repeatable"
